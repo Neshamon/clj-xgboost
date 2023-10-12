@@ -20,7 +20,7 @@
 
 (->> (generate-iris iris-path)
      (take 2)
-     (map first))
+     (map first)) ; thread-macro is super awesome!!!
 
 (->> (generate-iris iris-path)
      (take 2)
@@ -33,13 +33,13 @@
      (map #(map parse-float %))
      (map vec))
 
-(defn transform-x
+(def transform-x
   (comp
    (map first)
    (map #(map parse-float %))
    (map vec)))
 
-(defn transform-y
+(def transform-y
   (comp
    (map last)
    (map (fn [label]
@@ -48,3 +48,8 @@
                 "setosa" 0
                 "versicolor" 1
                 "virginica" 2)))))
+
+(defn munge-data [iris-data]
+  (let [x (into [] transform-x iris-data)
+        y (into [] transform-y iris-data)]
+    (map conj x y))) ; Concatenates both lists
