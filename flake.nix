@@ -26,7 +26,7 @@
           };
 
           shellHook =''
-          echo "Welcome to the clj-xgboost env!"
+            echo "Welcome to the clj-xgboost env!"
           '';
         });
       };
