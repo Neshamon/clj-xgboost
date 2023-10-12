@@ -1,4 +1,4 @@
-# clj-boost-demo
+# clj-xgboost-demo
 
 A Clojure library designed to ... well, that part is up to you.
 
