@@ -10,7 +10,7 @@
   (let [split-set (->> iris-path
                        generate-iris
                        munge-data
-                       (train-test-split 120))
+                       (train-test-split 120))  ;; Won't run correctly because of transform-y :C
         [train test] (map #(% split-set) [train-set test-set])
         model (train-model train)
         result (predict-model model test)]
@@ -37,7 +37,7 @@
      (map first)
      (map #(map parse-float %)))
 
-(->> (generate-iris iris-path)
+#_(->> (generate-iris iris-path)
      (take 2)
      (map first)
      (map #(map parse-float %))
@@ -52,12 +52,12 @@
 (def transform-y
   (comp
    (map last)
-   (map (fn [label]
+   (map #(fn [label] ;; This function seems to be causing issues? Not sure how to fix yet
           (let [l (first label)]
-                case l
-                "setosa" 0
-                "versicolor" 1
-                "virginica" 2)))))
+            (case l
+              "setosa" 0
+              "versicolor" 1
+              "virginica" 2))))))
 
 (defn munge-data [iris-data]
   (let [x (into [] transform-x iris-data)

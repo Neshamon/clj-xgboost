@@ -22,7 +22,12 @@
       {
         devShells = forEachSupportedSystem ({ pkgs }: {
           default = pkgs.mkShell {
-            packages = with pkgs; [ boot clojure leiningen ];
+            packages = with pkgs; [
+              boot
+              clojure
+              leiningen
+              clojure-lsp
+            ];
 
             shellHook =''
               echo "Welcome to the clj-xgboost env!"
