@@ -53,3 +53,27 @@
   (let [x (into [] transform-x iris-data)
         y (into [] transform-y iris-data)]
     (map conj x y))) ; Concatenates both lists
+
+(defn train-test-split [n dataset]
+  (let [shuffled (shuffle dataset)]
+    (split-at n shuffled))) ; Takes a collection and number of instances and shuffles them
+
+(defn train-set [split-set]
+  (let [set (first split-set)]
+    {:x (mapv drop-last set)
+     :y (mapv last set)}))
+
+(defn test-set [split-set]
+  (let [set (last split-set)]
+    {:x (mapv drop-last set)
+     :y (mapv last set)}))
+
+(defn train-model [train-set]
+  (let [data (boost/dmatrix train-set)
+        params {:params {:eta 0.00001
+                         :objective "multi:softmax"
+                         :num_class 3}
+                :rounds 2
+                :watches {:train-data}
+                :early-stopping 10}]
+    (boost/fit data params)))
