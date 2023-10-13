@@ -6,7 +6,17 @@
 (def iris-path "resources/iris.csv")
 
 (defn -main []
-  (println "Hello World"))
+  (println "Welcome to clj-xgboost-demo!")
+  (let [split-set (->> iris-path
+                       generate-iris
+                       munge-data
+                       (train-test-split 120))
+        [train test] (map #(% split-set) [train-set test-set])
+        model (train-model train)
+        result (predict-model model test)]
+    (println "Prediction: " (mapv int result))
+    (println "Real: " (:y test))
+    (println "Accuracy: " (accuracy result (:y test)))))
 
 (defn generate-iris
   [iris-path]
@@ -70,10 +80,18 @@
 
 (defn train-model [train-set]
   (let [data (boost/dmatrix train-set)
-        params {:params {:eta 0.00001
+        params {:params {:eta 0.00001 ;; This is the learning rate
                          :objective "multi:softmax"
-                         :num_class 3}
-                :rounds 2
+                         :num_class 3} ;; Tells xgboost how many classes we have
+                :rounds 2 ;; This defines how many rounds of boosting we do
                 :watches {:train-data}
                 :early-stopping 10}]
-    (boost/fit data params)))
+    (boost/fit data params))) ;; Trains an xgboost model from scratch and returns a boost instance
+
+(defn predict-model [model test-set]
+  (boost/predict model (boost/dmatrix test-set)))
+
+(defn accuracy [predicted real]
+  (let [right (map #(compare %1 %2) predicted real)]
+    (/ (count (filter zero? right))
+       (count real))))
